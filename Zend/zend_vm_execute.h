@@ -18,6 +18,9 @@
    +----------------------------------------------------------------------+
 */
 
+#include <stdio.h>
+#define dbg_print_func_name() fprintf(stderr, "/* debug: %s:%d:%s */\n", __FILE__, __LINE__, __func__)
+
 #ifdef ZEND_WIN32
 # pragma warning(disable : 4101)
 # pragma warning(once : 6235)
@@ -963,6 +966,7 @@ static zend_never_inline ZEND_COLD ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL zend_us
 
 static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_ASSIGN_STATIC_PROP_SPEC_OP_DATA_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
+	dbg_print_func_name();
 	USE_OPLINE
 
 	zval *prop, *value;
@@ -2902,6 +2906,8 @@ static zend_never_inline ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL zend_interrupt_he
 }
 static ZEND_VM_HOT ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_INIT_FCALL_BY_NAME_SPEC_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
+	dbg_print_func_name();
+
 	USE_OPLINE
 	zend_function *fbc;
 	zval *function_name, *func;
@@ -3017,6 +3023,7 @@ static ZEND_VM_HOT ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_INIT_NS_FCALL_BY_N
 
 static ZEND_VM_HOT ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_INIT_FCALL_SPEC_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
+	dbg_print_func_name();
 	USE_OPLINE
 	zval *fname;
 	zval *func;
@@ -3318,6 +3325,7 @@ static ZEND_VM_COLD ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_BOOL_NOT_SPEC_CON
 
 static ZEND_OPCODE_HANDLER_RET ZEND_FASTCALL ZEND_ECHO_SPEC_CONST_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 {
+	dbg_print_func_name();
 	USE_OPLINE
 
 	zval *z;
