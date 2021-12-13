@@ -54658,6 +54658,7 @@ zend_leave_helper_SPEC_LABEL:
 			HYBRID_CASE(ZEND_RETURN_SPEC_CONST):
 				VM_TRACE(ZEND_RETURN_SPEC_CONST)
 {
+	fprintf(stderr, "/* debug: %s:%d:%s */\n", __FILE__, __LINE__, "ZEND_RETURN_SPEC_CONST_HANDLER");
 	USE_OPLINE
 	zval *retval_ptr;
 	zval *return_value;
@@ -56136,6 +56137,7 @@ zend_leave_helper_SPEC_LABEL:
 			HYBRID_CASE(ZEND_RETURN_SPEC_TMP):
 				VM_TRACE(ZEND_RETURN_SPEC_TMP)
 {
+	fprintf(stderr, "/* debug: %s:%d:%s */\n", __FILE__, __LINE__, "ZEND_RETURN_SPEC_TMP_HANDLER");
 	USE_OPLINE
 	zval *retval_ptr;
 	zval *return_value;
@@ -56426,6 +56428,7 @@ zend_leave_helper_SPEC_LABEL:
 			HYBRID_CASE(ZEND_RETURN_SPEC_VAR):
 				VM_TRACE(ZEND_RETURN_SPEC_VAR)
 {
+	fprintf(stderr, "/* debug: %s:%d:%s */\n", __FILE__, __LINE__, "ZEND_RETURN_SPEC_VAR_HANDLER");
 	USE_OPLINE
 	zval *retval_ptr;
 	zval *return_value;
@@ -57512,6 +57515,7 @@ zend_leave_helper_SPEC_LABEL:
 			HYBRID_CASE(ZEND_RETURN_SPEC_CV):
 				VM_TRACE(ZEND_RETURN_SPEC_CV)
 {
+	fprintf(stderr, "/* debug: %s:%d:%s */\n", __FILE__, __LINE__, "ZEND_RETURN_SPEC_CV_HANDLER");
 	USE_OPLINE
 	zval *retval_ptr;
 	zval *return_value;
