@@ -4610,7 +4610,8 @@ static zend_always_inline zend_execute_data *_zend_vm_stack_push_call_frame(uint
 
 
 #ifndef VM_SMART_OPCODES
-# define VM_SMART_OPCODES 1
+// # define VM_SMART_OPCODES 1
+# define VM_SMART_OPCODES 0
 #endif
 
 #if VM_SMART_OPCODES
@@ -4705,6 +4706,10 @@ static zend_always_inline zend_execute_data *_zend_vm_stack_push_call_frame(uint
 # define ZEND_VM_SMART_BRANCH_JMPNZ(_result, _check)
 # define ZEND_VM_SMART_BRANCH_TRUE()
 # define ZEND_VM_SMART_BRANCH_FALSE()
+# define ZEND_VM_SMART_BRANCH_TRUE_JMPNZ()
+# define ZEND_VM_SMART_BRANCH_FALSE_JMPNZ()
+# define ZEND_VM_SMART_BRANCH_TRUE_JMPZ()
+# define ZEND_VM_SMART_BRANCH_FALSE_JMPZ()
 #endif
 
 #ifdef __GNUC__
