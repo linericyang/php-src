@@ -7131,6 +7131,28 @@ repeat:
 		ZEND_OP_TRACE_INFO(opline, offset)->trace_flags & ZEND_JIT_TRACE_START_MASK, 0);
 	JIT_G(tracing) = 0;
 
+	if (trace_buffer->start == ZEND_JIT_TRACE_START_ENTER) {
+		zend_jit_trace_rec *p = trace_buffer;
+		ZEND_ASSERT(p->op == ZEND_JIT_TRACE_START);
+		p += ZEND_JIT_TRACE_START_REC_SIZE;
+
+		while(1){
+			if (p->op == ZEND_JIT_TRACE_ENTER){
+				if ((p+1)->op == ZEND_JIT_TRACE_END && stop == ZEND_JIT_TRACE_STOP_LINK) {
+					break;
+				}
+				stop = ZEND_JIT_TRACE_STOP_JIT_LATER;
+				int16_t *counter = ZEND_OP_TRACE_INFO(orig_opline, offset)->counter;
+				(*counter) = ((ZEND_JIT_COUNTER_INIT + JIT_G(hot_func) - 1) / JIT_G(hot_func)) + 1;
+				// fprintf(stderr, "@@@@@@@@@ JIT trace %d later, counter: %d\n", trace_num, *counter);
+				break;
+			} else if (p->op == ZEND_JIT_TRACE_END) {
+				break;
+			}
+			p++;
+		}
+	}
+
 	if (stop & ZEND_JIT_TRACE_HALT) {
 		ret = -1;
 	}
@@ -7265,9 +7287,11 @@ static zend_bool zend_jit_trace_exit_is_hot(uint32_t trace_num, uint32_t exit_nu
 		zend_jit_traces[trace_num].exit_counters + exit_num;
 
 	if (*counter + 1 >= JIT_G(hot_side_exit)) {
+		fprintf(stderr, "@@@@@@@ side trace hot %d\n", *counter + 1);
 		return 1;
 	}
 	(*counter)++;
+	fprintf(stderr, "@@@@@@@ side trace NOT hot %d\n", *counter);
 	return 0;
 }
 
@@ -7450,6 +7474,29 @@ int ZEND_FASTCALL zend_jit_trace_hot_side(zend_execute_data *execute_data, uint3
 	JIT_G(tracing) = 1;
 	stop = zend_jit_trace_execute(execute_data, EX(opline), trace_buffer, ZEND_JIT_TRACE_START_SIDE, is_megamorphic);
 	JIT_G(tracing) = 0;
+
+	// if INIT_FCALL and DO_ICALL back in trace_buffer, JIT later
+	if (trace_buffer->start == ZEND_JIT_TRACE_START_SIDE) {
+		zend_jit_trace_rec *p = trace_buffer;
+		ZEND_ASSERT(p->op == ZEND_JIT_TRACE_START);
+		p += ZEND_JIT_TRACE_START_REC_SIZE;
+
+		while(1){
+			if (p->op == ZEND_JIT_TRACE_ENTER){
+				if ((p+1)->op == ZEND_JIT_TRACE_END && stop == ZEND_JIT_TRACE_STOP_LINK) {
+					break;
+				}
+				stop = ZEND_JIT_TRACE_STOP_JIT_LATER;
+				uint8_t *counter = JIT_G(exit_counters) + zend_jit_traces[parent_num].exit_counters + exit_num;
+				(*counter) = *counter - 2;
+				// fprintf(stderr, "@@@@@@@@@ JIT trace %d later, counter: %d\n", trace_num, *counter);
+				break;
+			} else if (p->op == ZEND_JIT_TRACE_END) {
+				break;
+			}
+			p++;
+		}
+	}
 
 	if (stop & ZEND_JIT_TRACE_HALT) {
 		ret = -1;

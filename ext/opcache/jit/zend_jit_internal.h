@@ -163,6 +163,7 @@ zend_constant* ZEND_FASTCALL zend_jit_check_constant(const zval *key);
 	_(COMPILED_LOOP,     "compiled loop") \
 	_(TRAMPOLINE,        "trampoline call") \
 	_(BAD_FUNC,          "bad function call") \
+	_(JIT_LATER,         "jit trace later") \
 	_(COMPILER_ERROR,    "JIT compilation error") \
 	/* no recoverable error (blacklist immediately) */ \
 	_(NO_SHM,            "insufficient shared memory") \

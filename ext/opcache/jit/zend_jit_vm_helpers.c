@@ -544,6 +544,7 @@ zend_jit_trace_stop ZEND_FASTCALL zend_jit_trace_execute(zend_execute_data *ex, 
 	zend_execute_data *save_execute_data = execute_data;
 	const zend_op *save_opline = opline;
 #endif
+	int16_t *prev_func_counter = NULL;
 	const zend_op *orig_opline, *end_opline;
 	zend_jit_trace_stop stop = ZEND_JIT_TRACE_STOP_ERROR;
 	zend_jit_trace_stop halt = 0;
@@ -776,6 +777,11 @@ zend_jit_trace_stop ZEND_FASTCALL zend_jit_trace_execute(zend_execute_data *ex, 
 			} else if (rc == 1) {
 #endif
 				/* Enter into function */
+				trace_flags = ZEND_OP_TRACE_INFO(opline, offset)->trace_flags;
+				if (!(trace_flags & ZEND_JIT_TRACE_JITED)) {
+					prev_func_counter = ZEND_OP_TRACE_INFO(opline, offset)->counter;
+				}
+
 				prev_call = NULL;
 				if (level > ZEND_JIT_TRACE_MAX_CALL_DEPTH) {
 					stop = ZEND_JIT_TRACE_STOP_TOO_DEEP;
@@ -1024,6 +1030,10 @@ zend_jit_trace_stop ZEND_FASTCALL zend_jit_trace_execute(zend_execute_data *ex, 
 				break;
 			}
 		}
+	}
+
+	if (prev_func_counter != NULL) {
+		*prev_func_counter = 1;
 	}
 
 	end_opline = opline;
